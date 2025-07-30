@@ -1,0 +1,3 @@
+RewriteEngine On
+# Forward Authorization header to PHP
+RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]

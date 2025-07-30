@@ -45,5 +45,11 @@ class Database
     {
         return $this->statement->fetchColumn();
     }
+
+    // New method to get the last inserted ID
+    public function lastInsertId(): string
+    {
+        return $this->connection->lastInsertId();
+    }
 }
 
