@@ -84,7 +84,7 @@ class AuthController
                 $userData = $user->getUserByGoogleId();
                 if ($userData) {
                     // Start session or generate JWT token
-                    session_start();
+                    // session_start();
                     $_SESSION['user'] = $userData;
                     return Utils::sendSuccessResponse('Login successful', $userData);
                 }

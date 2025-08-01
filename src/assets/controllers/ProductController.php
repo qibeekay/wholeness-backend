@@ -19,7 +19,7 @@ class ProductController
     // Get all products
     public function fetchAll(): string
     {
-        AuthGuard::guard();
+        // AuthGuard::guardBearer();
         return Utils::sendSuccessResponse('Product fetched successfully', $this->store->all());
     }
 
@@ -27,7 +27,7 @@ class ProductController
     // get single product by id
     public function fetchById(int $id): string
     {
-        AuthGuard::guard();
+        AuthGuard::guardBearer();
         $product = $this->store->find($id);
 
         return $product ? Utils::sendSuccessResponse('Product fetched successfully', $product)
@@ -37,7 +37,7 @@ class ProductController
     // create a new product
     public function store(array $input, array $files = []): string
     {
-        AuthGuard::guard();
+        AuthGuard::guardBearer();
 
         [$data, $errors] = Utils::validate($input, [
             'name' => 'required|string|max:255',
@@ -65,7 +65,7 @@ class ProductController
     /* ----------  UPDATE  ---------- */
     public function update(int $id, array $input, array $files = []): string
     {
-        AuthGuard::guard();
+        AuthGuard::guardBearer();
 
         if (!$this->store->find($id)) {
             return Utils::sendErrorResponse('Product not found', 404);
@@ -105,7 +105,7 @@ class ProductController
     /* ----------  DELETE  ---------- */
     public function destroy(int $id): string
     {
-        AuthGuard::guard();
+        AuthGuard::guardBearer();
         if (!$this->store->find($id)) {
             return Utils::sendErrorResponse('Product not found', 404);
         }

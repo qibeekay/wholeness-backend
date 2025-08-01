@@ -6,7 +6,7 @@ use PDO;
 
 class Database
 {
-    private $connection;
+    private PDO $connection;
 
     public $statement;
 
@@ -50,6 +50,22 @@ class Database
     public function lastInsertId(): string
     {
         return $this->connection->lastInsertId();
+    }
+
+    /* ---------------- new transaction helpers ---------------- */
+    public function beginTransaction(): bool
+    {
+        return $this->connection->beginTransaction();
+    }
+
+    public function commit(): bool
+    {
+        return $this->connection->commit();
+    }
+
+    public function rollBack(): bool
+    {
+        return $this->connection->rollBack();
     }
 }
 

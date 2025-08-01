@@ -2,6 +2,8 @@
 
 namespace App\Helpers;
 
+use App\Models\Store;
+
 class Utils
 {
     /**
@@ -99,5 +101,46 @@ class Utils
         }
 
         return [$clean, $errors];
+    }
+
+    /**
+     * Validate cart items and calculate total.
+     *
+     * @param array $items Array of cart items, each with 'id' and 'qty'
+     * @param Store $store Store model instance to fetch product data
+     * @return array [products, total] Array of validated products and total price
+     * @throws \Exception If validation fails, exits with error response
+     */
+    public static function validateCart(array $items, Store $store): array
+    {
+        $products = [];
+        $total = 0.0;
+
+        foreach ($items as $it) {
+            $id = (int) ($it['id'] ?? 0);
+            $qty = (int) ($it['qty'] ?? 0);
+
+            /** @var array|false $prod */
+            $prod = $store->find($id);
+            if (!$prod) {
+                echo self::sendErrorResponse("Product $id not found", 404);
+                exit;
+            }
+            if ($qty <= 0 || $qty > $prod['quantity']) {
+                echo self::sendErrorResponse("Invalid quantity for {$prod['name']}", 422);
+                exit;
+            }
+
+            $products[] = [
+                'id' => $prod['id'],
+                'name' => $prod['name'],
+                'price' => $prod['price'],
+                'quantity' => $prod['quantity'],
+                'qty' => $qty,
+            ];
+            $total += $prod['price'] * $qty;
+        }
+
+        return [$products, $total];
     }
 }
