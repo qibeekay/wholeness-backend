@@ -7,7 +7,7 @@ if ($origin === 'http://localhost:5173') {
 }
 
 // Allow methods and headers
-header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
+header('Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type, Authorization');
 
 // Handle pre-flight

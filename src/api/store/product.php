@@ -44,12 +44,18 @@ switch ($method) {
         echo isset($id) ? $controller->fetchById($id) : $controller->fetchAll();
         break;
     case 'POST':
-        echo $controller->store($input, $_FILES);
+        if ($id) {
+            // treat as update
+            echo $controller->update($id, $input, $_FILES);
+        } else {
+            // normal create
+            echo $controller->store($input, $_FILES);
+        }
         break;
-    case 'PUT':
-    case 'PATCH':
-        echo $controller->update($id, $input, $_FILES);
-        break;
+    // case 'PUT':
+    // case 'PATCH':
+    //     echo $controller->update($id, $input, $_FILES);
+    //     break;
     case 'DELETE':
         echo $controller->destroy($id);
         break;
