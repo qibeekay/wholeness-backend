@@ -22,6 +22,8 @@ use App\Config\Database;
 use App\Controllers\CheckoutController;
 use App\Models\Store;
 use App\Helpers\ErrorHandler;
+use App\Helpers\EmailService;
+
 
 
 // Register error and exception handlers
@@ -38,7 +40,11 @@ $config = require dirname(__DIR__, 2) . '/assets/config/config.php';
 // Initialize database and controller
 $db = new Database($config['database']);
 $store = new Store($db);
-$ctrl = new CheckoutController($db, $store);
+$mailer = new EmailService(
+    $config['services']['apiUrl'],
+    $config['services']['bearerToken']
+);
+$ctrl = new CheckoutController($db, $store, $mailer);
 
 /* ----- route POST /api/store/cart/checkout ----- */
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {

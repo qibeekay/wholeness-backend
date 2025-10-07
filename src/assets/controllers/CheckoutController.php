@@ -8,16 +8,19 @@ use App\Helpers\Utils;
 use App\Models\Store;
 use Stripe\Stripe;
 use Stripe\PaymentIntent;
+use App\Helpers\EmailService;
 
 class CheckoutController
 {
     private Database $db;
     private Store $store;
+    private EmailService $mailer;
 
-    public function __construct(Database $db, Store $store)
+    public function __construct(Database $db, Store $store, EmailService $mailer)
     {
         $this->db = $db;
         $this->store = $store;
+        $this->mailer = $mailer;
         Stripe::setApiKey($_ENV['STRIPE_SECRET_KEY']);
     }
 
@@ -149,11 +152,30 @@ class CheckoutController
             );
 
             $this->db->commit();
-            return Utils::sendSuccessResponse('Payment confirmed', ['orderId' => $orderId]);
+
+            /* ---------- send receipt ---------- */
+            $user        = $this->db->query('SELECT email FROM users WHERE id = :id', ['id' => $order['user_id']])->find();
+            $orderItems  = $this->db->query(
+                'SELECT oi.quantity, oi.unit_price, p.name
+       FROM order_items oi
+       JOIN products p ON p.id = oi.product_id
+      WHERE oi.order_id = :oid',
+                ['oid' => $orderId]
+            )->getAll();
+
+            $mailResult = $this->mailer->sendPaymentReceipt($user['email'], $order, $orderItems, true);
+            error_log('[MAIL] orderId=' . $orderId . ' success=' . ($mailResult['success'] ? '1' : '0') . ' msg=' . $mailResult['message']);
+
+            return Utils::sendSuccessResponse('Payment confirmed', [
+                'orderId' => $orderId,
+                '_mail'   => $mailResult,       // remove in production
+                'email' => $user['email']
+            ]);
+
+            // return Utils::sendSuccessResponse('Payment confirmed', ['orderId' => $orderId]);
         } catch (\Throwable $e) {
             $this->db->rollBack();
             return Utils::sendErrorResponse('Capture failed', 500);
         }
     }
-
 }

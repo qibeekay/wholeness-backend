@@ -37,6 +37,6 @@ class FileUpload
         }
 
         // Public URL (change host if you deploy elsewhere)
-        return 'https://api-wholeness.ai/src/media/' . $name;
+        return 'https://wholeness-backend.ai/src/media/' . $name;
     }
 }
