@@ -49,7 +49,7 @@ class ProductController
 
 
         if ($errors) {
-            return Utils::sendErrorResponse('Validation failed: ' . implode(', ', $errors), 422, );
+            return Utils::sendErrorResponse('Validation failed: ' . implode(', ', $errors), 422,);
         }
 
         // File upload
@@ -81,7 +81,7 @@ class ProductController
 
 
         if ($errors) {
-            return Utils::sendErrorResponse('Validation failed: ' . implode(', ', $errors), 422, );
+            return Utils::sendErrorResponse('Validation failed: ' . implode(', ', $errors), 422,);
         }
 
         if (!empty($files['image']['tmp_name'])) {

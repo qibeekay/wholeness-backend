@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Helpers;
 
 class AuthGuard
@@ -33,28 +34,20 @@ class AuthGuard
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
-
-        // echo json_encode($_SESSION);
-        // exit;
-
-        if (!isset($_SESSION['user'])) {
+        if (!isset($_SESSION['user']['id'])) {   // make sure id is there
             http_response_code(401);
             header('Content-Type: application/json');
-            echo json_encode(['status' => 'error', 'message' => "User not logged in "]);
+            echo json_encode(['status' => 'error', 'message' => 'User not logged in']);
             exit;
         }
+    }
 
-
-
-        // var_dump($_SESSION[]);
-        // exit;
-
-
-        // if (!isset($_SESSION['user'])) {
-        //     http_response_code(401);
-        //     header('Content-Type: application/json');
-        //     echo json_encode(['status' => 'error', 'message' => "User not logged in "]);
-        //     exit;
-        // }
+    /**
+     * Return the id of the authenticated user.
+     * Call guardUser() first to be sure the session exists.
+     */
+    public static function userId(): int
+    {
+        return (int)($_SESSION['user']['id'] ?? 0);
     }
 }
